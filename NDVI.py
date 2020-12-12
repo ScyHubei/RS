@@ -1,3 +1,5 @@
+# 计算NDVI，多波段的数据，nir为近红外波段在数据的位置，Red同理！
+
 from osgeo import gdal
 import os
 import numpy as np
@@ -71,6 +73,8 @@ def WriteTif(filename, im_proj, im_geotrans, im_data, new_data):
 if __name__ == '__main__':
     name,path = openfile()
     os.chdir(path)
+    nir = int(input("Nir:"))
+    red = int(input("Red:"))
     proj, geotrans, im_data,shape = opentif(name)
-    NDVI_data = (im_data[3]-im_data[2])/(im_data[3]+im_data[2])
+    NDVI_data = (im_data[nir - 1]-im_data[red - 1])/(im_data[nir - 1]+im_data[red - 1])
     WriteTif("ndvi.tif", proj, geotrans, im_data, NDVI_data)
