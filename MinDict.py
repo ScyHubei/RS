@@ -1,3 +1,7 @@
+# 最小距离监督分类，要有一个使用tif格式的样本，以及一样大小范围的影像。
+# 影像需要是多波段的，单波段的出错了，不知道为啥！
+# 用到了gdal os numpy  tkinter
+
 from osgeo import gdal
 import os
 import numpy as np
@@ -42,7 +46,7 @@ class GRID:
         #     dataset.GetRasterBand(i + 1).WriteArray(im_data[i])  # 写入新的栅格矩阵数据
         del dataset
 
-
+# 用tkinter打开一个文件管理器，选择要分类的影像
 def openfile():
     import tkinter as tk
     from tkinter import filedialog
@@ -63,7 +67,7 @@ def openfile():
     filepath = b
     return name, filepath
 
-
+# 读取样本
 def getsample(sampledata,test_data):
     centerlen = test_data.shape[0] + 2
     MeansCenter = [None]
@@ -93,7 +97,7 @@ def getsample(sampledata,test_data):
     # print(MeansCenter)
     return MeansCenter
 
-
+# 计算分类中心
 def getcenter(center):
     Meancenter = center
     for i in range(0,len(Meancenter)):
@@ -104,7 +108,7 @@ def getcenter(center):
     print(Meancenter)
     return Meancenter
 
-
+# 排序 
 def bullersort(classes,diction):
     for i in range(0,len(diction)):
         for j in range(0,len(diction)-1):
@@ -116,7 +120,7 @@ def bullersort(classes,diction):
                 classes[j+1] = classes[j]
                 classes[j] = ctemp
 
-
+# 计算距离，并分类
 def classfity(im_data, new_data, MeansCenter):
     height = im_data.shape[1]
     width = im_data.shape[2]
@@ -144,7 +148,7 @@ if __name__ == '__main__':
     img = GRID()
     im_proj, im_geotrans, im_data = img.read_img(name)
     sample = GRID()
-    sample_proj, sample_geotrans, sample_data=sample.read_img("test.tif")
+    sample_proj, sample_geotrans, sample_data=sample.read_img("test.tif")   #这里要是样本
     center = getsample(sample_data,im_data)
     sampleCenter = getcenter(center)
 
