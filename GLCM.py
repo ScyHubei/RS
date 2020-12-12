@@ -1,6 +1,7 @@
-#通过开窗获得窗口内的像素，并对窗口矩阵计算灰度共生矩阵，并选择测度返回出纹理图像。
-#开窗前要进行图像的降级，使用的是线性拉伸的方法进行降级。
-#执行程序前最好对图像做一个直方图均衡化。
+# 通过开窗获得窗口内的像素，并对窗口矩阵计算灰度共生矩阵，并选择测度返回出纹理图像。
+# 开窗前要进行图像的降级，使用的是线性拉伸的方法进行降级。
+# 执行程序前最好对图像做一个直方图均衡化。
+#  单波段    遥感影像越小越好，程序效率极低！！！！！
 
 
 
@@ -8,7 +9,7 @@ from osgeo import gdal
 import os
 import numpy as np
 
-
+# 打开遥感图像数据
 def opentif(filename):
     dataset = gdal.Open(filename)
 
@@ -26,7 +27,7 @@ def opentif(filename):
     del dataset
     return proj, geotrans, im_data,im_data.shape,new_data
 
-
+# 对读取的影像进行灰度降级
 def stch(data,bit):
     max = data.max()
     min = data.min()
@@ -43,7 +44,7 @@ def stch(data,bit):
     # print(data)
     return data
 
-
+# 计算灰度共生矩阵
 def getGLCM(tempdata, bit, number):
     GLCM = [0] * bit
     for z in range(len(GLCM)):
@@ -62,8 +63,8 @@ def getGLCM(tempdata, bit, number):
     # print(GLCM)
     return GLCM
 
-
-def getasm(GLCM, bit):  # 能量
+# 能量测度
+def getasm(GLCM, bit):  
     asm = 0
     for i in range(bit):
         for j in range(bit):
@@ -71,8 +72,8 @@ def getasm(GLCM, bit):  # 能量
     print(asm)
     return asm
 
-
-def getent(GLCM, bit):# 熵
+# 熵
+def getent(GLCM, bit):
     import math
     ent = 0
     for i in range(bit):
@@ -82,7 +83,7 @@ def getent(GLCM, bit):# 熵
     print(ent)
     return ent
 
-
+# 同质性
 def getidm(GLCM, bit): # 同质性
     idm = 0
     for i in range(bit):
@@ -92,7 +93,7 @@ def getidm(GLCM, bit): # 同质性
     print(idm)
     return idm
 
-
+# 对比度
 def getcon(GLCM, bit):  # 对比度
     con = 0
     for i in range(bit):
@@ -101,7 +102,7 @@ def getcon(GLCM, bit):  # 对比度
     print(con)
     return con
 
-
+# 获得窗口内的要素值
 def chuank(data, shape, newdata, number):
     list1 = []
     for i in range(0, shape[0]):
@@ -124,7 +125,7 @@ def chuank(data, shape, newdata, number):
                         temp[m + abs(m)][n + abs(m)] = 0
                     else:
                         temp[m + abs(m)][n + abs(m)] = data[i + m][j + n]
-            GLCM = getGLCM(temp, bit, number)
+            GLCM = getGLCM(temp, bit, number)   #灰度共生矩阵
 
             # asm = getasm(GLCM, bit)     # 能 量
             # newdata[i][j] = asm
@@ -140,7 +141,7 @@ def chuank(data, shape, newdata, number):
 
     return newdata
 
-
+# 保存为tif
 def WriteTif(filename, im_proj, im_geotrans, im_data, new_data):
     # 判断栅格数据的数据类型
     if 'int8' in im_data.dtype.name:
