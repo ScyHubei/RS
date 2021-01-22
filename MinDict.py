@@ -1,7 +1,7 @@
 # 最小距离监督分类，要有一个使用tif格式的样本，以及一样大小范围的影像。
 # 影像需要是多波段的，单波段的出错了，不知道为啥！
 # 用到了gdal os numpy  tkinter
-
+# 样本需要是一个单波段的TIF格式，可以从ENVI.ROI里面直接导出tif
 from osgeo import gdal
 import os
 import numpy as np
